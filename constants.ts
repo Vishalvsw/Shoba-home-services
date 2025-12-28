@@ -85,6 +85,26 @@ export const SERVICES: Service[] = [
       { question: 'How long for the sofa to dry?', answer: 'Usually 3-4 hours under a fan.' },
     ],
   },
+  {
+    id: 'kitchen-cleaning',
+    slug: 'kitchen-cleaning',
+    title: 'Kitchen Cleaning',
+    shortDescription: 'Thorough cleaning of kitchens, stovetops, ovens, and appliances.',
+    fullDescription: 'Our Kitchen Cleaning service ensures your cooking space is spotless and hygienic. We degrease surfaces, clean appliances, and sanitize countertops using professional products. Perfect for maintaining a healthy cooking environment.',
+    icon: 'Home',
+    priceRange: '₹599 – ₹1,199',
+    basePrice: 599,
+    features: ['Degreasing all surfaces', 'Appliance cleaning', 'Refrigerator wiping', 'Floor mopping'],
+    images: [
+        'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80', // Kitchen clean
+        'https://images.unsplash.com/photo-1556909020-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80', // Stove clean
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=800&q=80' // Appliances
+    ],
+    faqs: [
+      { question: 'Do you clean inside the oven?', answer: 'Yes, we provide deep oven cleaning as part of the service.' },
+      { question: 'Is it safe for all kitchen appliances?', answer: 'We use safe, non-abrasive cleaners suitable for most surfaces.' },
+    ],
+  },
 ];
 
 export const TESTIMONIALS: Review[] = [

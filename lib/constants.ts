@@ -61,10 +61,17 @@ export const SERVICES: Service[] = [
       { label: 'Villa', price: 'inspection', sizeInfo: 'On-site Quote' },
     ],
     features: ['Machine Floor Scrubbing', 'Kitchen Degreasing', 'Bathroom Descaling', 'Window Track Cleaning'],
-    images: [
-      'https://images.unsplash.com/photo-1581578731117-10d52143b0d8?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1527513913476-fa952934e569?auto=format&fit=crop&w=800&q=80'
-    ],
+    // images: [
+    //   'https://images.unsplash.com/photo-Ddzir2TCR2g?auto=format&fit=crop&w=1200&q=80', // High quality clean kitchen
+    //   'https://images.unsplash.com/photo-Ddzir2TCR2g?auto=format&fit=crop&w=1200&q=80', // Living room clean
+    //   'https://images.unsplash.com/photo-Ddzir2TCR2g?auto=format&fit=crop&w=1200&q=80'  // Professional detail
+    // ]
+
+  images: [
+  'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1595526114035-45c0a7c8a4c1?auto=format&fit=crop&w=1200&q=80'
+  ],
     faqs: [{ question: 'Is it for occupied homes?', answer: 'Yes, this is specifically for homes where people are currently living.' }],
   },
   {
@@ -83,8 +90,8 @@ export const SERVICES: Service[] = [
     ],
     features: ['Herbal Gel Injection', 'Odorless Spray', 'Corner Treatment', '90-Day Warranty'],
     images: [
-      'https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1587575494201-29d415827bec?auto=format&fit=crop&w=800&q=80'
+      'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?auto=format&fit=crop&w=1200&q=80', // Professional in action
+      'https://images.unsplash.com/photo-1615873968403-89e0686282a9?auto=format&fit=crop&w=1200&q=80'  // Clean interior environment
     ],
     faqs: [{ question: 'Is it safe for kids?', answer: 'Yes, we use government-approved odorless chemicals safe for kids and pets.' }],
   },
@@ -104,8 +111,8 @@ export const SERVICES: Service[] = [
     ],
     features: ['Deep Vacuuming', 'Eco-friendly Shampooing', 'Wet Extraction', 'Deodorization'],
     images: [
-      'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1550254478-ead40cc54513?auto=format&fit=crop&w=800&q=80'
+      'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=80', // Green Sofa
+      'https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=1200&q=80'  // Clean bedroom/mattress context
     ],
     faqs: [{ question: 'How long to dry?', answer: 'It usually takes 3-4 hours to dry completely under a fan.' }],
   }

@@ -30,11 +30,160 @@ import {
   Ban,
   User,
   Hash,
-  MapPinned
+  MapPinned,
+  PartyPopper,
+  ArrowRight,
+  Loader2,
+  Smartphone,
+  QrCode,
+  ShieldAlert
 } from 'lucide-react';
 import { Button, Card, Input, Select, Badge } from '../components/ui';
 import { SERVICES, LOCATIONS } from '../lib/constants';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// --- Confetti Component for Celebration ---
+const Confetti = () => {
+  const colors = ['#2563EB', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {[...Array(40)].map((_, i) => {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 50 + Math.random() * 200;
+        const color = colors[i % colors.length];
+        return (
+          <motion.div
+            key={i}
+            initial={{ scale: 0, x: 0, y: 0, opacity: 1, rotate: 0 }}
+            animate={{ 
+              scale: [0, 1, 0.8, 0], 
+              x: Math.cos(angle) * distance, 
+              y: Math.sin(angle) * distance - 50,
+              rotate: Math.random() * 360,
+              opacity: [1, 1, 0]
+            }}
+            transition={{ 
+              duration: 2.5, 
+              ease: "easeOut", 
+              delay: Math.random() * 0.2 
+            }}
+            className="absolute w-2 h-3 rounded-sm"
+            style={{ 
+              backgroundColor: color, 
+              left: '50%', 
+              top: '40%' 
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+// --- PhonePe Payment Modal ---
+const PhonePePayment = ({ amount, onPaymentSuccess, onCancel }: { amount: number, onPaymentSuccess: () => void, onCancel: () => void }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleSimulatePayment = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      onPaymentSuccess();
+    }, 2500);
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
+    >
+      <motion.div 
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        className="w-full max-w-md bg-white rounded-[2.5rem] overflow-hidden shadow-2xl"
+      >
+        {/* PhonePe Header */}
+        <div className="bg-[#5f259f] p-6 text-white flex items-center justify-between">
+          <div className="flex items-center gap-3">
+             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center p-1">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" alt="PhonePe" className="w-full" />
+             </div>
+             <span className="font-black text-lg tracking-tight uppercase">Checkout</span>
+          </div>
+          <button onClick={onCancel} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+            <ChevronLeft size={24} />
+          </button>
+        </div>
+
+        {/* Amount Display */}
+        <div className="p-8 text-center bg-gray-50 border-b border-gray-100">
+           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Amount Payable</p>
+           <h3 className="text-4xl font-black text-gray-900">₹{amount}</h3>
+        </div>
+
+        {/* QR Code Section */}
+        <div className="p-8 space-y-8">
+           <div className="relative group mx-auto w-56 h-56 bg-white p-4 rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center shadow-inner">
+             <QrCode size={140} className="text-[#5f259f]" />
+             <div className="mt-4 flex flex-col items-center">
+                <div className="flex items-center gap-1.5 text-[10px] font-black text-green-600 uppercase">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> Valid for {formatTime(timeLeft)}
+                </div>
+             </div>
+             
+             {isProcessing && (
+               <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center z-10 rounded-3xl">
+                  <Loader2 className="animate-spin text-[#5f259f] mb-4" size={48} />
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest animate-pulse">Verifying Transaction...</p>
+               </div>
+             )}
+           </div>
+
+           <div className="text-center space-y-4">
+              <p className="text-sm font-bold text-gray-600">Scan this QR using PhonePe App <br /> or any UPI App to Pay</p>
+              
+              <div className="flex items-center justify-center gap-6 py-4">
+                 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo.png" alt="UPI" className="h-6 opacity-60 grayscale hover:grayscale-0 transition-all cursor-help" title="Unified Payments Interface" />
+                 <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" className="h-4 opacity-40" />
+                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6 opacity-40" />
+              </div>
+           </div>
+        </div>
+
+        {/* Action Button */}
+        <div className="p-8 pt-0">
+          <Button 
+            onClick={handleSimulatePayment} 
+            disabled={isProcessing}
+            className="w-full h-16 bg-[#5f259f] hover:bg-[#4d1d81] text-white rounded-2xl text-lg font-black shadow-xl shadow-purple-200 group"
+          >
+             {isProcessing ? 'Processing...' : 'Simulate Success'} 
+             {!isProcessing && <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />}
+          </Button>
+          <p className="mt-6 flex items-center justify-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+            <ShieldAlert size={14} className="text-green-500" /> SECURE 256-BIT ENCRYPTION
+          </p>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 const BASE_TIME_SLOTS = [
   { time: '09:00 AM', hour: 9, category: 'Morning', icon: Sun, badge: 'Popular' },
@@ -71,6 +220,7 @@ export default function BookingPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [step, setStep] = useState(1);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [dates] = useState(getNextDays(14));
   const [zoom, setZoom] = useState(1);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -196,22 +346,81 @@ export default function BookingPage() {
 
   const selectedFullDate = dates.find(d => d.fullDate === formData.date);
 
+  const handleNext = () => {
+    if (step === 4) {
+      setIsPaymentOpen(true);
+    } else {
+      setStep(step + 1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 selection:bg-blue-100">
       <div className="max-w-4xl mx-auto">
+        <AnimatePresence>
+          {isPaymentOpen && (
+            <PhonePePayment 
+              amount={totalPayable} 
+              onPaymentSuccess={() => {
+                setIsPaymentOpen(false);
+                setStep(5);
+              }}
+              onCancel={() => setIsPaymentOpen(false)}
+            />
+          )}
+        </AnimatePresence>
+
         <AnimatePresence mode="wait">
           {step === 5 ? (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }} 
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               <Card className="p-16 text-center bg-white rounded-[4rem] shadow-3xl overflow-hidden relative border-none">
                 <div className="absolute top-0 left-0 w-full h-3 bg-blue-600" />
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", damping: 12 }} className="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-10">
+                
+                {/* Celebratory Animation Components */}
+                <Confetti />
+                
+                <motion.div 
+                  initial={{ scale: 0, rotate: -45 }} 
+                  animate={{ scale: 1, rotate: 0 }} 
+                  transition={{ type: "spring", damping: 10, stiffness: 100, delay: 0.2 }} 
+                  className="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-10 relative z-10"
+                >
                   <CheckCircle2 size={56} />
+                  <motion.div 
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                    className="absolute inset-0 rounded-full bg-green-500"
+                  />
                 </motion.div>
-                <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Booking Successful!</h2>
-                <p className="text-gray-500 font-medium mb-12 max-w-sm mx-auto">Thank you for choosing Shoba. Your cleaning expert will see you on {selectedFullDate?.date} {selectedFullDate?.month} at {formData.time}.</p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                   <Button variant="secondary" size="lg" onClick={() => navigate('/status')} className="rounded-2xl">Track Order</Button>
-                   <Button variant="outline" size="lg" onClick={() => navigate('/')} className="rounded-2xl">Return Home</Button>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="relative z-10"
+                >
+                  <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Booking Successful!</h2>
+                  <p className="text-gray-500 font-medium mb-12 max-w-sm mx-auto">
+                    Woohoo! Your home transformation is scheduled for <span className="text-blue-600 font-black">{selectedFullDate?.date} {selectedFullDate?.month}</span> at <span className="text-blue-600 font-black">{formData.time}</span>. 
+                    Check your phone for a confirmation SMS.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button variant="secondary" size="lg" onClick={() => navigate('/status')} className="rounded-2xl group">
+                      Track Order <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                    <Button variant="outline" size="lg" onClick={() => navigate('/')} className="rounded-2xl">Return Home</Button>
+                  </div>
+                </motion.div>
+
+                {/* Background Decor */}
+                <div className="absolute -bottom-20 -right-20 p-20 opacity-[0.03] pointer-events-none rotate-12">
+                  <PartyPopper size={300} />
                 </div>
               </Card>
             </motion.div>
@@ -291,7 +500,7 @@ export default function BookingPage() {
                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2"><Calendar size={16} className="text-blue-600" /> Preferred Date</label>
                       <div className="flex gap-4 overflow-x-auto pb-8 no-scrollbar -mx-10 px-10">
                         {dates.map((d) => (
-                          <motion.button key={d.fullDate} onClick={() => updateField('date', d.fullDate)} whileHover={{ scale: 1.02 }} className={`flex flex-col items-center justify-center min-w-[110px] h-[140px] rounded-[3rem] border-2 transition-all shrink-0 ${formData.date === d.fullDate ? 'border-blue-600 bg-blue-600 text-white shadow-2xl' : 'border-gray-50 bg-white shadow-sm'}`}>
+                          <motion.button key={d.fullDate} onClick={() => updateField('date', d.fullDate)} whileHover={{ scale: 1.02 }} className={`flex flex-col items-center justify-center min-w-[110px] h-[140px] rounded-[3rem] border-2 transition-all shrink-0 ${formData.date === d.fullDate ? 'border-blue-600 bg-blue-600 text-white shadow-2xl' : 'border-gray-100 bg-white shadow-sm'}`}>
                             <span className="text-[10px] font-black uppercase mb-1 opacity-60">{d.month}</span>
                             <span className="text-3xl font-black">{d.date}</span>
                             <span className="text-[10px] font-black uppercase mt-1 opacity-70">{d.day}</span>
@@ -387,7 +596,10 @@ export default function BookingPage() {
                            <div className="flex justify-between text-sm text-gray-400"><span className="font-bold">GST (18%)</span><span className="font-black">₹{tax}</span></div>
                          </div>
                          <div className="bg-white/5 p-8 rounded-[2rem] border border-white/10"><div className="flex justify-between items-end"><div><span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] block mb-2">Total Payable</span><span className="text-5xl font-black text-white leading-none">₹{totalPayable}</span></div></div></div>
-                         <div className="mt-8 flex items-center justify-center gap-6 text-gray-500 text-[9px] font-black uppercase tracking-widest"><div className="flex items-center gap-2"><CreditCard size={14} /> Pay Post-Visit</div><div className="flex items-center gap-2"><ShieldCheck size={14} /> 100% Satisfaction</div></div>
+                         <div className="mt-8 flex items-center justify-center gap-6 text-gray-500 text-[9px] font-black uppercase tracking-widest">
+                           <div className="flex items-center gap-2"><Smartphone size={14} /> PhonePe / UPI</div>
+                           <div className="flex items-center gap-2"><ShieldCheck size={14} /> Secure Payment</div>
+                         </div>
                       </div>
                     </div>
                   </div>
@@ -401,7 +613,7 @@ export default function BookingPage() {
                   )}
                   <Button 
                     variant="secondary" size="xl" className="flex-[2] h-20 rounded-[2rem] text-xl shadow-2xl shadow-blue-500/20 group"
-                    onClick={() => setStep(step + 1)}
+                    onClick={handleNext}
                     disabled={
                       (step === 1 && !isStep1Valid) ||
                       (step === 2 && !isStep2Valid) ||
